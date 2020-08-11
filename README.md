@@ -4,6 +4,7 @@ PROGRAMING STYLES
 
 MONOLITHIC
 
+```javascript
 function obtenerCursos() {
     var correo = document.getElementById('correo').value;
     var datos = 'correo='+correo;
@@ -24,3 +25,6 @@ function obtenerCursos() {
     });
     return false;
 }
+```
+
+asdasd
