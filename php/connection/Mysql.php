@@ -1,6 +1,6 @@
 <?php
 
-include './Dbconfig.php';
+include ($_SERVER['DOCUMENT_ROOT'].'/Asistencia/php/connection/Dbconfig.php');
 
 class Mysql extends Dbconfig{
 	
@@ -29,7 +29,7 @@ class Mysql extends Dbconfig{
 		}
 		mysqli_select_db($this-> connectionString, $this->dbName) or die ("No se encuentra la base de datos");
 		mysqli_set_charset($this-> connectionString, "utf8");
-		//return $this-> connectionString;
+		return $this-> connectionString;
 	}
 	function dbDisconnect(){
 		$this->connectionString = NULL;
