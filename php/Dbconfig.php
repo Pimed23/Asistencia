@@ -11,9 +11,9 @@ class Dbconfig{
 
 	//TODO hacer un constructor para que sea dinamico
 	function Dbconfig(){
-		$this->serverName= '127.0.0.1';
+		$this->serverName= 'localhost';
 		$this->userName= 'root';
-		$this->passCode= '123456789';
+		$this->passCode= 'root';
 		$this->dbName= 'Asistencia';
 	}
 }

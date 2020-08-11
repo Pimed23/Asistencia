@@ -1,9 +1,10 @@
 class Usuario {
 
-    constructor( nombre, apellido, correo ) {
+    constructor( nombre, apellido, correo, tipo ) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.correo = correo;
+        this.tipo = tipo;
     }
     
     setNombre( nombre ) {
@@ -28,6 +29,32 @@ class Usuario {
 
     getCorreo() {
         return this.correo;
+    }
+
+    verificarDatos( correo ) {
+        var datos = 'correo='+correo;
+    
+        $.ajax({
+            type: 'POST',
+            url: "php/login.php",
+            data: datos,
+            success: function( response ) {
+                var datosUsuario = JSON.parse( response );
+                
+                if( datosUsuario == '-1' ) {
+                    alert("Usuario no encontrado...");
+                } else {
+                    this.nombre = datosUsuario['nombre'];
+                    this.apellido = datosUsuario['apellido'];
+                    this.correo = datosUsuario['correo'];
+                    this.tipo = datosUsuario['tipo'];
+                    location.href="mostrarCursos.html";
+                }
+
+            }, error: function( response, status, error ) {
+                alert("No encontrado");
+            }
+        });
     }
 }
 
