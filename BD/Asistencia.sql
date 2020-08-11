@@ -6,7 +6,8 @@ CREATE TABLE Usuarios(
 	id_usuario VARCHAR(4) PRIMARY KEY NOT NULL,
 	nombre VARCHAR(50) NOT NULL,
 	apellido VARCHAR(50) NOT NULL,
-	correo VARCHAR(50) NOT NULL
+	correo VARCHAR(50) NOT NULL,
+	tipo VARCHAR(3) NOT NULL
 );
 
 CREATE TABLE Profesores(
