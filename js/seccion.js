@@ -1,8 +1,9 @@
 class Seccion {
 
-    constructor( aula, hora, curso ) {
+    constructor( aula, hora, curso, profesor ) {
         this.aula = aula;
         this.hora = hora;
+        this.profesor = new Profesor( profesor.nombre, profesor.apellido, profesor.correo );
         this.curso = new Curso( curso.nombre, curso.codigo );
         this.asistencia = [];
     }
@@ -13,6 +14,12 @@ class Seccion {
 
     setHora( hora ) {
         this.hora = hora;
+    }
+
+    setProfesor( profesor ) {
+        this.profesor.setNombre( profesor.nombre );
+        this.profesor.setApellido( profesor.apellido );
+        this.profesor.setCorreo( profesor.correo );
     }
 
     setCurso( curso ) {
@@ -31,6 +38,10 @@ class Seccion {
 
     getHora() {
         return this.codigo;
+    }
+
+    getProfesor() {
+        return this.profesor;
     }
 
     getCurso() {
