@@ -1,4 +1,14 @@
-function obtenerCantidadFaltas() {
+function CargarAsitencia( asistencia ) { 
+    
+    
+}
+
+function ObtenerCantidadFaltas() {
+    
+}
+
+
+function MostrarFaltas() {
     var correo = document.getElementById('correo').value;
     var datos = 'correo='+correo;
     $.ajax({
