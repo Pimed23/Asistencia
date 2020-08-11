@@ -21,6 +21,7 @@ class Mysql extends Dbconfig{
 		$this->passCode = $dbConnection->passCode ;
 		$dbConnection = NULL;	
 	}
+
 	function dbConnect(){
 		$this->connectionString = mysqli_connect($this->serverName, $this->userName, $this->passCode);
 		if( mysqli_connect_errno()){
@@ -29,8 +30,9 @@ class Mysql extends Dbconfig{
 		}
 		mysqli_select_db($this-> connectionString, $this->dbName) or die ("No se encuentra la base de datos");
 		mysqli_set_charset($this-> connectionString, "utf8");
-		//return $this-> connectionString;
+		return $this-> connectionString;
 	}
+
 	function dbDisconnect(){
 		$this->connectionString = NULL;
 		$this->dataSet = NULL;
@@ -40,15 +42,18 @@ class Mysql extends Dbconfig{
 		$this->userName = NULL;
 		$this->passCode = NULL;		
 	}
+
 	function selectAll($tableName){
-		$this -> sqlQuery = 'SELECT * FROM '.$this -> databaseName.'.'.$tableName;
+		$this -> sqlQuery = 'SELECT * FROM '.$tableName;
 		$this -> dataSet = mysqli_query($this-> connectionString, $this->sqlQuery);
+	
 		$json_array = array();
 		while( $row = mysqli_fetch_assoc($this->dataSet)){
 			$json_array = $row;
 		}
 		echo (json_encode($json_array));
 	}
+
 	function insertInto($tableName, $values){
 		$i = NULL;
 		$size = sizeof($values);
@@ -63,17 +68,34 @@ class Mysql extends Dbconfig{
 				$this -> sqlQuery .= ',';
 		}
 		$this -> sqlQuery .= ')';
-		echo $this->sqlQuery;	
+		echo $this -> sqlQuery;
 		if(mysqli_query($this->connectionString, $this->sqlQuery) == false){
 			echo mysqli_error($this->connectionString);
 		}
 	}
+	
 	function update($tableName, $columnName,$newValue, $identificador,$id){
 		$this -> sqlQuery = 'UPDATE '.$tableName.' SET '.$columnName." = '" .$newValue. "' WHERE ".$identificador.' ='.$id;
-		echo $this->sqlQuery;
 		if(mysqli_query($this->connectionString, $this->sqlQuery) == false){
 			echo mysqli_error($this->connectionString);
 		}
 	}
+	
+	function find( $tableName, $columnName, $element ) {
+		$this -> sqlQuery = 'SELECT * FROM '.$tableName.' WHERE '.$columnName." ='".$element."'";
+		$this -> dataSet = mysqli_query($this-> connectionString, $this->sqlQuery);
+		
+		$json_array = array();
+		while( $row = mysqli_fetch_assoc($this->dataSet)){
+			$json_array = $row;
+		}
+
+		if( $json_array == NULL )
+			echo -1;
+		else 
+			echo (json_encode($json_array));
+	}
+
 }
+
 ?>
