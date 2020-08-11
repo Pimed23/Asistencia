@@ -20,15 +20,5 @@ class Curso {
     getCodigo() {
         return this.codigo;
     }
-
-    verificarDatos( cursos ) {
-        if( cursos == '-1' ) {
-            alert("Usuario no encontrado...");
-        } else {
-            location.href="mostrarCursos.html";
-        }
-    }
-
-
     
 };

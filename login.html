@@ -6,6 +6,7 @@
         <script type="text/javascript" src="js/all-plugins.js"></script>
         <script type="text/javascript" src="js/plugins-activate.js"></script>
         <script type="text/javascript" src="js/usuario.js"></script>
+        <script type="text/javascript" src="js/usuario.js"></script>
 
         <script
             src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -29,7 +30,7 @@
                 </div>
                 <div>
                     <label for="nombre">Correo Institucional: </label>
-                    <input class="input" type="text" id="correo" name="correo" placeholder="&#128100; Ingrese un correo"> 
+                    <input class="input" type="text" id="correo" name="correo" onblur="revisarEmail()" placeholder="&#128100; Ingrese un correo"> 
                 </div>
                 <div class="btn_form">
                     <input class="btn_reset" type="reset" value="Salir">
