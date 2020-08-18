@@ -1,4 +1,5 @@
 <?php
+include ($_SERVER['DOCUMENT_ROOT'].'/Asistencia/php/entities/EntityPreInsertion.php');
 abstract class Query{
 	protected $sqlQuery;
 	abstract function exec($connection);
@@ -58,10 +59,36 @@ class QueryInsert extends Query{
 	}
 }
 
-//interfaz
-class QueryHandler{
-	function QueryHandler($query,$connection){
-		$query->exec($connection);
+class FactoryQuery{
+	function FactoryQuery(){}
+	function createQuery($tabla,$actionIn){
+		$query;
+		switch($actionIn){
+			case 'QueryUpdate':
+				$tempColumna = $_GET['columna'];
+				$tempNewValue = $_GET['newvalue'];
+				$tempIdentificador = $_GET['identificador'];
+				$tempIdValue = $_GET['identificadorvalue'];
+				$query = new QueryUpdate($tabla, $tempColumna, $tempNewValue, $tempIdentificador, $tempIdValue);
+				break;		
+			case 'QuerySelectAll':
+				$query = new QuerySelectAll($tabla);
+				break;
+			case 'QueryInsert':
+				$factoryPI = new FactoryPreInsertion();
+				$newPreInsertion = $factoryPI -> createPreInsertion($tabla);
+				$newPreinsertion -> preparar();
+				$lista = $newPreinsertion -> getLista();
+				$query = new QueryInsert($tabla, $lista);
+				break;
+			case 'QueryDelete'://TODO
+				break;
+			case 'Desconocido':				
+				break;
+			default :
+				break;
+		}
+		return $query;	
 	}
 }
 ?>
