@@ -1,8 +1,8 @@
 # Asistencia
 
-##PROGRAMING STYLES
+## PROGRAMING STYLES
 
-###MONOLITHIC
+### MONOLITHIC
 
 Se desarrolla como una secuencia de declaraciones y no como una secuencia de funciones.
 
@@ -29,19 +29,27 @@ function obtenerCursos() {
 }
 ```
 
-###PIPELINE
+### PIPELINE
+
+Las funciones no se comunican usando datos globales y luego se llaman de forma secuencial.
 
 ```javascript
+function revisarTexto( elemento ) {
+/*
+* Implementacion
+*/
+}
+
+function revisarNumero( elemento ) {
+/*
+* Implementacion
+*/
+}
+
 function revisarEmail( elemento ) {
-    var data =elemento.value;
-    var exp =/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-    if( exp.test(data)){
-        elemento.className='input';
-    } else {
-        elemento.className='error';
-        return false;
-    }
-    return true;
+/*
+* Implementacion
+*/
 }
 
 function validar() {
@@ -79,10 +87,11 @@ function validar() {
 }
 ```
 
-PRINCIPIOS SOLID
+## PRINCIPIOS SOLID
 
-SRP
+### SRP
 
+Principio de responsabilidad Unica, las clases se encargan unicamente de funcionalidades de su tabla y no realiza funcionalidades que no son de ella
 ```javascript
 class Historial {
 
@@ -114,33 +123,55 @@ class Historial {
 ```
 
 
-OCP
+### OCP
 
+Utilizamos el principio abierto cerrado para que la clase CheckValues este abierta a extensiones, en nuestro caso formatos con expresiones regulares.
 
 ```javascript
 class checkValues{
-    contructor(value,tipo){
-        this.value = value; 
-        this.tipo = tipo;
+    contructor(validador){
+        this.validador = validador; 
     }
     
     valueCorrecto(){
-        switch (tipo) {
-            case  'number':
-                T = new isNumber(value);
-                return T.comprobar();        
-            case  'telephone':
-                T = new isTelephone(value);
-                return T.comprobar();        
-            case 'email': 
-                T = new isEmail(value);
-                return T.comprobar();        
-            case 'DNI':
-                T = new isDNI(value);
-                return T.comprobar();        
-            default:
-                return false;
+        return validador.comprobar();
+    }
+}
+
+class Validador{
+    contructor(value){
+        this.value = value; 
+    }
+    comprobar();
+}
+
+class isNumber extends Validador { 
+    comprobar(){
+        return !isNaN(parseFloat(value)) && isFinite(value);
+    }
+}
+class isTelephone  extends Validador {
+    comprobar(){
+        if( !(/^\d{9}$/.test(value)) ) {
+            return false;
+        }
+        return true;
+    }
+}
+class isDNI  extends Validador {
+    comprobar(){
+        if( !(/^\d{8}$/.test(value)) ) {
+            return false;
+        }
+        return true;  
+    }
+}
+class isEmail  extends Validador {
+    comprobar(){
+        if( !(/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)/.test(valor)) ) {
+            return false;
           }
+        return true;  
     }
 }
 ```
