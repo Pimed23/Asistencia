@@ -145,12 +145,12 @@ class Validador{
     comprobar();
 }
 
-class isNumber extends Validador { 
+class Number extends Validador { 
     comprobar(){
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 }
-class isTelephone  extends Validador {
+class Telephone  extends Validador {
     comprobar(){
         if( !(/^\d{9}$/.test(value)) ) {
             return false;
@@ -158,7 +158,7 @@ class isTelephone  extends Validador {
         return true;
     }
 }
-class isDNI  extends Validador {
+class DNI  extends Validador {
     comprobar(){
         if( !(/^\d{8}$/.test(value)) ) {
             return false;
@@ -166,7 +166,7 @@ class isDNI  extends Validador {
         return true;  
     }
 }
-class isEmail  extends Validador {
+class Email  extends Validador {
     comprobar(){
         if( !(/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)/.test(valor)) ) {
             return false;
@@ -175,5 +175,29 @@ class isEmail  extends Validador {
     }
 }
 ```
+### ISP
 
+Usamos el principio de Inversion de dependencias ya que no dependemos de clases concretas como Number, Telephone , en cambio dependemos de la clase Abstracta Validador
 
+```javascript
+class Validador{
+    contructor(value){
+        this.value = value; 
+    }
+    comprobar();
+}
+
+class Number extends Validador { 
+    comprobar(){
+        return !isNaN(parseFloat(value)) && isFinite(value);
+    }
+}
+class Telephone  extends Validador {
+    comprobar(){
+        if( !(/^\d{9}$/.test(value)) ) {
+            return false;
+        }
+        return true;
+    }
+}
+```
