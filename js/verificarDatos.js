@@ -1,41 +1,26 @@
 class checkValues{
-    contructor(value,tipo){
-        this.value = value; 
-        this.tipo = tipo;
+    contructor(validador){
+        this.validador = validador; 
     }
     
     valueCorrecto(){
-        switch (tipo) {
-            case  'number':
-                T = new isNumber(value);
-                return T.comprobar();        
-            case  'telephone':
-                T = new isTelephone(value);
-                return T.comprobar();        
-            case 'email': 
-                T = new isEmail(value);
-                return T.comprobar();        
-            case 'DNI':
-                T = new isDNI(value);
-                return T.comprobar();        
-            default:
-                return false;
-          }
+        return validador.comprobar();
     }
 }
 
-class isNumber{
+class Validador{
     contructor(value){
         this.value = value; 
     }
+    comprobar();
+}
+
+class isNumber extends Validador { 
     comprobar(){
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 }
-class isTelephone{
-    contructor(value){
-        this.value = value; 
-    }
+class isTelephone  extends Validador {
     comprobar(){
         if( !(/^\d{9}$/.test(value)) ) {
             return false;
@@ -43,10 +28,7 @@ class isTelephone{
         return true;
     }
 }
-class isDNI{
-    contructor(value){
-        this.value = value; 
-    }
+class isDNI  extends Validador {
     comprobar(){
         if( !(/^\d{8}$/.test(value)) ) {
             return false;
@@ -54,10 +36,7 @@ class isDNI{
         return true;  
     }
 }
-class isEmail{
-    contructor(value){
-        this.value = value; 
-    }
+class isEmail  extends Validador {
     comprobar(){
         if( !(/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)/.test(valor)) ) {
             return false;
