@@ -7,15 +7,15 @@ El proposito del poryecto es crear un sistema de asistencia el cual servira para
 ## FUNCIONALIDADES 
 
 El software tendra las siguientes Funcionalidades:
--Login: Al ingresar el usuario a la aplicación aparecerá un formulario en el cual se solicita su correo institucional para habilitar el uso de la misma. De esta manera se validará al usuario.
--Inicio de control de asistencia: El profesor al llegar al salón accederá al sistema pudiendo visualizar los cursos que enseña seleccionando el curso en el que desea habilitar la asistencia de los estudiantes.
--Mostrar Cursos: Se mostrara la lista de cursos a la que el usurio pertences para que pueda acceder a las funcionalidades especificas.
+- Login: Al ingresar el usuario a la aplicación aparecerá un formulario en el cual se solicita su correo institucional para habilitar el uso de la misma. De esta manera se validará al usuario.
+- Inicio de control de asistencia: El profesor al llegar al salón accederá al sistema pudiendo visualizar los cursos que enseña seleccionando el curso en el que desea habilitar la asistencia de los estudiantes.
+- Mostrar Cursos: Se mostrara la lista de cursos a la que el usurio pertences para que pueda acceder a las funcionalidades especificas.
  -Registro de asistencia: El alumno al desear registrar su asistencia accederá al sistema pudiendo visualizar todos los cursos en los que se encuentra matriculado, seleccionando uno,  en el cual registrará su asistencia , el sistema le brindara la opción para realizar esta acción mientras este habilitado el control de asistencia.
--Registro asistido: En caso de que un alumno no pueda registrar su asistencia, el profesor tendrá la posibilidad de modificarla, accediendo a la lista del respectivo curso, seleccionara al alumno y cambiara el estado de la asistencia.
--Modificación de asistencia: En caso existiera algún error por parte del docente, este podrá agregar o quitar asistencias a cualquier alumno, esto quedara registrado en la aplicación y tanto él como todos los alumnos podrán visualizarlo.
--Fin de control de asistencia: El profesor al desear deshabilitar la asistencia del curso,tendrá la opción de dar fin al tiempo del registro de asistencia, una vez cancelada la asistencia el profesor visualizará la cantidad total de alumnos que asistieron. 
--Historial de asistencia: Se permitira a los usuarios ver el historial de modificaciones de una lista de asistencia a la que pertenescan. 
--Generando Reportes de asistencia:  El sistema permite al profesor la descarga de la lista de asistencias de sus cursos.
+- Registro asistido: En caso de que un alumno no pueda registrar su asistencia, el profesor tendrá la posibilidad de modificarla, accediendo a la lista del respectivo curso, seleccionara al alumno y cambiara el estado de la asistencia.
+- Modificación de asistencia: En caso existiera algún error por parte del docente, este podrá agregar o quitar asistencias a cualquier alumno, esto quedara registrado en la aplicación y tanto él como todos los alumnos podrán visualizarlo.
+- Fin de control de asistencia: El profesor al desear deshabilitar la asistencia del curso,tendrá la opción de dar fin al tiempo del registro de asistencia, una vez cancelada la asistencia el profesor visualizará la cantidad total de alumnos que asistieron. 
+- Historial de asistencia: Se permitira a los usuarios ver el historial de modificaciones de una lista de asistencia a la que pertenescan. 
+- Generando Reportes de asistencia:  El sistema permite al profesor la descarga de la lista de asistencias de sus cursos.
 
 ## PRACTICAS DE CODIGO LEGIBLE
 
