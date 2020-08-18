@@ -1,8 +1,10 @@
 # Asistencia
 
-PROGRAMING STYLES
+##PROGRAMING STYLES
 
-MONOLITHIC
+###MONOLITHIC
+
+Se desarrolla como una secuencia de declaraciones y no como una secuencia de funciones.
 
 ```javascript
 function obtenerCursos() {
@@ -27,7 +29,7 @@ function obtenerCursos() {
 }
 ```
 
-PIPELINE
+###PIPELINE
 
 ```javascript
 function revisarEmail( elemento ) {
