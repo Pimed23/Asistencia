@@ -201,6 +201,37 @@ function validar() {
 }
 ```
 
+### THINGS
+
+Utilizamos objetos para acceder a los datos, por lo que no la accedemos directamente
+
+```javacript
+class Curso {
+
+    constructor( nombre, codigo ) {
+        this.nombre = nombre;
+        this.codigo = codigo;
+    }
+
+    setNombre( nombre ) {
+        this.nombre = nombre;
+    }
+
+    setCodigo( codigo ) {
+        this.codigo = codigo;
+    }
+
+    getNombre() {
+        return this.nombre;
+    }
+
+    getCodigo() {
+        return this.codigo;
+    }
+    
+};
+```
+
 ## PRINCIPIOS SOLID
 
 ### SRP
