@@ -315,3 +315,43 @@ class Telephone  extends Validador {
     }
 }
 ```
+## Conceptos DDD
+El diseño guiado por el dominio, en inglés: domain-driven design (DDD), es un enfoque para el desarrollo de software con necesidades complejas mediante una profunda conexión entre la implementación y los conceptos del modelo y núcleo del negocio.
+El DDD no es una tecnología ni una metodología, este provee una estructura de prácticas y terminologías para tomar decisiones de diseño que enfoquen y aceleren el manejo de dominios complejos en los proyectos de software.
+### Entities
+Las entidades son objetos del modelo que se caracterizan por tener identidad en el sistema, los atributos que contienen no son su principal característica. Representan conceptos con una identidad que se mantienen en el tiempo, y que con frecuencia también se mantienen bajo distintas representaciones de la entidad. Deben poder ser distinguidas de otros objetos aunque tengan los mismos atributos. Tienen que poder ser consideradas iguales a otros objetos aún cuando sus atributos difieren.
+
+Por ejemplo, imaginemos un objeto Alumno con nombre y apellidos como atributos de una clase en un sistema donde dos objetos que representan a dos alumnos diferentes con los mismos nombres y apellidos deberían ser considerados diferentes. Como vemos, en este caso no podemos describir el objeto persona primariamente por sus atributos, si no que debemos de asignarle una identidad que se mantenga para cualquier representación de esa persona. Si nuestro sistema trabaja únicamente con personas de nacionalidad peruana podríamos considerar como identidad el DNI, en cambio si manejamos personas de cualquier nacionalidad quizás debamos de autogenerar este ID dentro de nuestro sistema. Cabe destacar que en nuestro sistema, Alumno es considerado una entidad.
+
+La identidad tiene que ser declarada de tal manera que podemos rastrear la entidad de manera eficaz. Los atributos, responsabilidades y relaciones deben ser definidas en relación a la identidad que representa la entidad más que en los atributos que la componen.
+
+Como podemos observar, el hecho de que necesitemos identificar y distinguir distintos objetos a lo largo de su ciclo de vida hace que la complejidad para manejarlos y diseñarlos sea bastante mayor que la de los que no la necesitan. Por este motivo debemos usar entidades únicamente para objetos que realmente lo requieran, lo cual tiene dos ventajas importantes. Por un lado, no incluiremos complejidad innecesaria en objetos que no requieran ser identificados, por otro lado al reducir el número de entidades en el sistema seremos capaces de identificarlas rápidamente.
+
+### Value objects
+Al contrario que las entidades los value objects representan conceptos que no tienen identidad. Simplemente describen características. Por lo tanto solo nos interesan sus atributos.
+
+Los value object representan elementos del modelo que se describen por el QUÉ son, y no por QUIÉN o CUÁL son.
+
+Pongamos por ejemplo, un objeto Curso representado por su composición ID, nombre y código. Si tuviéramos dos objetos representando el mismo curso podríamos usar cualquiera de ellos, ya que nos interesa qué curso es por sus atributos, no por cuál instancia estamos usando. Otros ejemplos de value objects podrían ser String o Integer, ya que no nos importa que ¨C¨ o que ¨3¨ estamos usando. Aunque estos ejemplos son simples los value objects no tienen porque serlo.
+
+Esto conlleva una serie de diferencias a la hora de modelar value objects respecto a las entidades. Los value objects suelen ser modelados como inmutables y son menos complejos de diseñar, ya que podremos usarlos y descartarlos según nos interese, pues no tenemos que preocuparnos por la instancia que estemos utilizando (siempre y cuando sus atributos sean los correctos).
+
+### Services
+Los servicios representan operaciones, acciones o actividades que no pertenecen conceptualmente a ningún objeto de dominio concreto. Los servicios no tienen ni estado propio ni un significado más allá que la acción que los definen.
+
+Al contrario que las entidades y los value objects, los servicios son definidos en términos de lo que pueden hacer por un cliente, y por tanto tienden a ser nombrados como verbos. Los verbos utilizados para nombrar a los servicios deben pertenecer al ubiquitous language, o ser introducidos en el en caso de que aún no lo sean. A la hora de implementarlos tanto sus parámetros como resultados deben ser objetos pertenecientes al dominio.
+
+Un servicio debe de cumplir tres características principales:
+
+* La operación que lo define está relacionada con un concepto de dominio, pero no es natural modelarlo como una entidad o un value object.
+* Su interfaz se especifica usando otros elementos del modelo de dominio.
+* La operación no tiene estado, por lo que cualquier cliente podría usar cualquier instancia del servicio sin tener en cuenta las operaciones que se han realizado con anterioridad en esa instancia.
+
+Podemos dividir los servicios en tres tipos diferentes según su relación con el núcleo del dominio.
+
+> Domain services
+Son responsables del comportamiento más específico del dominio, es decir, realizan acciones que no dependen de la aplicación concreta que estemos desarrollando, sino que pertenecen a la parte más interna del dominio y que podrían tener sentido en otras aplicaciones pertenecientes al mismo dominio.Por ejemplo, crear un nuevo curso.
+> Application services
+Son responsables del flujo principal de la aplicación, es decir, son los casos de uso de nuestra aplicación. Son la parte visible al exterior del dominio de nuestro sistema, por lo que son el punto de entrada-salida para interactuar con la funcionalidad interna del dominio. Su función es coordinar entidades, value objects, domain services e infrastructure services para llevar a cabo una acción.Por ejemplo, añadir un nuevo alumno al registro para tomarle la asitencia.
+> Infrastructure services
+Declaran comportamiento que no pertenece realmente al dominio de la aplicación pero que debemos ser capaces de realizar como parte de este. Por ejemplo, enviar el registro de asistencia de cada alumno a su correo. 
