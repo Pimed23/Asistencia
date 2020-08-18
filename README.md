@@ -266,7 +266,104 @@ class Historial {
     }
 };
 ```
+Módulo Conexión a Datos
+Primero tenemos la clase Mysql que se encarga sólo de conectar a la base de datos.
+```php
+class Mysql extends Dbconfig{
+	
+	public $connectionString;
+	public $dataSet;
+	
+	private $sqlQuery;
+		
+	function Mysql(){
+		$this->connectionString = NULL;
+		$this->dataSet = NULL;
+		$this->sqlQuery = NULL;
+		
+		$dbConnection =  new Dbconfig();
+		$this->dbName = $dbConnection->dbName;
+		$this->serverName = $dbConnection->serverName ;
+		$this->userName = $dbConnection->userName ;
+		$this->passCode = $dbConnection->passCode ;
+		$dbConnection = NULL;	
+	}
 
+	function dbConnect(){
+		$this->connectionString = mysqli_connect($this->serverName, $this->userName, $this->passCode);
+		if( mysqli_connect_errno()){
+			echo mysqli_error($this->connectionString);
+			exit();
+		}
+		mysqli_select_db($this-> connectionString, $this->dbName) or die ("No se encuentra la base de datos");
+		mysqli_set_charset($this-> connectionString, "utf8");
+		return $this-> connectionString;
+	}
+}
+```
+Tenemos Clases que se encargan sólo de cambiar la configuración de variables que usaremos continuamente
+```php
+class entitySetter{
+	private $entity;
+	function entitySetter($entityIn){
+		$this -> entity = setEntity($entityIn);
+	}
+	function setEntity($entityIn){
+		switch($entityIn){
+			case 'usuario':
+				$this -> entity = 'Usuarios';
+				break;
+			case 'curso':
+				$this -> entity = 'Cursos';
+				break;
+			case 'asistencia':
+				$this -> entity = 'Asistencias';
+				break;
+			case 'estudiante':
+				$this -> entity = 'Estudiantes';
+				break;
+			case 'profesor':
+				$this -> entity = 'Profesores';
+				break;
+			default :
+				$this -> entity = 'Desconocido';
+				break;		
+		}
+	}
+	function getEntity(){
+		return $this -> entity;	
+	}
+}
+
+class actionSetter{
+	private $action;
+	function actionSetter($actionIn){
+		$this -> action = setAction($actionIn);
+	}
+	function setAction($actionIn){
+		switch($actionIn){
+			case 'create':
+				$this -> action = 'QueryInsert';
+				break;
+			case 'update':
+				$this -> action = 'QueryUpdate';
+				break;
+			case 'read':
+				$this -> action = 'QuerySelectAll';
+				break;
+			case 'delete':
+				$this -> action = 'QueryDelete';
+				break;
+			default :
+				$this -> action = 'Desconocido';
+				break;
+		}
+	}
+	function getAction(){
+		return $this -> action;
+	}
+}
+```
 
 ### OCP
 
@@ -320,7 +417,90 @@ class Email  extends Validador {
     }
 }
 ```
-### ISP
+Módulo Conexión a datos
+La clase Query puede ser extendible a para tener más Queries personalizadas
+```php
+abstract class Query{
+	protected $sqlQuery;
+	abstract function exec($connection);
+	function getQuery(){
+		return $this->sqlQuery;
+	}
+}
+
+class QueryUpdate extends Query{
+	//tabla, culumna, nuevo valor, encontrar por, value para encontrar
+	function QueryUpdate($tableName, $columnName,$newValue, $identificador,$id){
+		$this -> sqlQuery = 'UPDATE '.$tableName.' SET '.$columnName." = '" .$newValue. "' WHERE ".$identificador.' ='.$id;
+	}
+
+	function exec($connection){
+		if(mysqli_query($connection, $this->sqlQuery) == false){
+			echo mysqli_error($this->connectionString);
+		}
+	}
+}
+
+class QuerySelectAll extends Query{
+	function QuerySelectAll($tableName){
+		$this -> sqlQuery = 'SELECT * FROM '.$this -> databaseName.'.'.$tableName;
+
+	}
+	function exec($connection){
+		$dataSet = mysqli_query($connection, $this->sqlQuery);
+		$json_array = array();
+		while( $row = mysqli_fetch_assoc($this->dataSet)){
+			$json_array = $row;
+		}
+		echo (json_encode($json_array));
+	}
+}
+
+class QueryInsert extends Query{
+	function QueryInsert($tableName, $values){
+		$i = NULL;
+		$size = sizeof($values);
+		$this -> sqlQuery = 'INSERT INTO '.$tableName.' VALUES(';
+		$i = 0;
+		while($i < $size){
+			$this -> sqlQuery .= "'";
+			$this -> sqlQuery .= $values[$i];
+			$this -> sqlQuery .= "'";
+			$i++;
+			if($i != $size)
+				$this -> sqlQuery .= ',';
+		}
+		$this -> sqlQuery .= ')';
+	}
+	function exec($connection){
+		if(mysqli_query($connection, $this->sqlQuery) == false){
+			echo mysqli_error($this->connectionString);
+		}
+	}
+}
+```
+Se puede agregar nuevos valores que extienden de EntityPreinsertion, esto nos sirve para preparar queries para la inserción
+```php
+abstract class EntityPreInsertion{
+	private $lista;
+	function EntityPreInsertion(){
+		$this -> lista = array();
+	}
+	function getLista(){
+		return $this -> lista;
+	}
+	abstract function preparar();
+}
+class UsuariosPreInsertion extends EntityPreInsertion{
+	function preparar(){
+		$this -> lista [] = $_GET['idUsuario'];
+		$this -> lista [] = $_GET['nombreUsuario'];
+		$this -> lista [] = $_GET['apellidoUsuario'];
+		$this -> lista [] = $_GET['correoUsuario'];
+	}
+}
+```
+### DIP
 
 Usamos el principio de Inversion de dependencias ya que no dependemos de clases concretas como Number, Telephone , en cambio dependemos de la clase Abstracta Validador
 
@@ -346,9 +526,36 @@ class Telephone  extends Validador {
     }
 }
 ```
+Módulo de Conexión
+Se han usado varias interfaces, estas no son dependientes de clases pero si de abstracciones por ejemplo se puede tener una entidad cualquiera y hacer que esta pueda realizar cualquier query.
+```php
+class FactoryDAO{
+	private $action;
+	private $entity;
+	function factoryDAO(){}
+	function createDAO($entityGET, $actionGET){
+		$tempEntity = new entitySetter($entityGET);
+		$tempAction = new actionSetter($actionGET);
+		$this -> entity = $tempEntity -> getEntity();
+		$this -> action	= $tempAction -> getAction();
+		$newEntity = new EntityDAO($this -> entity, $this -> action);
+		return $newEntity;
+	}
+}
+
+```
+
 ## Conceptos DDD
 El diseño guiado por el dominio, en inglés: domain-driven design (DDD), es un enfoque para el desarrollo de software con necesidades complejas mediante una profunda conexión entre la implementación y los conceptos del modelo y núcleo del negocio.
 El DDD no es una tecnología ni una metodología, este provee una estructura de prácticas y terminologías para tomar decisiones de diseño que enfoquen y aceleren el manejo de dominios complejos en los proyectos de software.
+### Lenguaje Ubicuo
+```php
+function createQuery($tabla,$actionIn);
+function QuerySelectAll($tableName);
+function QueryInsert($tableName, $values);
+function createDAO($entityGET, $actionGET);
+function prepararEntityParaPreInsertion();
+```
 ### Entities
 Las entidades son objetos del modelo que se caracterizan por tener identidad en el sistema, los atributos que contienen no son su principal característica. Representan conceptos con una identidad que se mantienen en el tiempo, y que con frecuencia también se mantienen bajo distintas representaciones de la entidad. Deben poder ser distinguidas de otros objetos aunque tengan los mismos atributos. Tienen que poder ser consideradas iguales a otros objetos aún cuando sus atributos difieren.
 
@@ -357,7 +564,84 @@ Por ejemplo, imaginemos un objeto Alumno con nombre y apellidos como atributos d
 La identidad tiene que ser declarada de tal manera que podemos rastrear la entidad de manera eficaz. Los atributos, responsabilidades y relaciones deben ser definidas en relación a la identidad que representa la entidad más que en los atributos que la componen.
 
 Como podemos observar, el hecho de que necesitemos identificar y distinguir distintos objetos a lo largo de su ciclo de vida hace que la complejidad para manejarlos y diseñarlos sea bastante mayor que la de los que no la necesitan. Por este motivo debemos usar entidades únicamente para objetos que realmente lo requieran, lo cual tiene dos ventajas importantes. Por un lado, no incluiremos complejidad innecesaria en objetos que no requieran ser identificados, por otro lado al reducir el número de entidades en el sistema seremos capaces de identificarlas rápidamente.
+### Factorías
+Factory para crear una entidad para ser insertada.
+```php
+class FactoryPreInsertion{
+	function FactoryPreInsertion(){}
+	function createPreInsertion($entityIn){
+		$tempEntityPreInsertion;
+		switch($entityIn){
+			case 'Usuarios':
+				$tempEntityPreInsertion = new UsuariosPreInsertion();
+				break;
+			case 'Cursos':
+				break;
+			case 'Asistencias':
+				break;
+			case 'Estudiantes':
+				break;
+			case 'Profesores':
+				break;
+			case 'Desconocido':
+				break;
+		}
+		return $tempEntityPreInsertion;		
+	}
+}
+```
 
+Factory para crear una nueva query.
+```php
+class FactoryQuery{
+	function FactoryQuery(){}
+	function createQuery($tabla,$actionIn){
+		$query;
+		switch($actionIn){
+			case 'QueryUpdate':
+				$tempColumna = $_GET['columna'];
+				$tempNewValue = $_GET['newvalue'];
+				$tempIdentificador = $_GET['identificador'];
+				$tempIdValue = $_GET['identificadorvalue'];
+				$query = new QueryUpdate($tabla, $tempColumna, $tempNewValue, $tempIdentificador, $tempIdValue);
+				break;		
+			case 'QuerySelectAll':
+				$query = new QuerySelectAll($tabla);
+				break;
+			case 'QueryInsert':
+				$factoryPI = new FactoryPreInsertion();
+				$newPreInsertion = $factoryPI -> createPreInsertion($tabla);
+				$newPreinsertion -> preparar();
+				$lista = $newPreinsertion -> getLista();
+				$query = new QueryInsert($tabla, $lista);
+				break;
+			case 'QueryDelete'://TODO
+				break;
+			case 'Desconocido':				
+				break;
+			default :
+				break;
+		}
+		return $query;	
+	}
+}
+```
+Factory para crear un nuevo objeto DAO
+```php
+class FactoryDAO{
+	private $action;
+	private $entity;
+	function factoryDAO(){}
+	function createDAO($entityGET, $actionGET){
+		$tempEntity = new entitySetter($entityGET);
+		$tempAction = new actionSetter($actionGET);
+		$this -> entity = $tempEntity -> getEntity();
+		$this -> action	= $tempAction -> getAction();
+		$newEntity = new EntityDAO($this -> entity, $this -> action);
+		return $newEntity;
+	}
+}
+```
 ### Value objects
 Al contrario que las entidades los value objects representan conceptos que no tienen identidad. Simplemente describen características. Por lo tanto solo nos interesan sus atributos.
 
@@ -383,6 +667,19 @@ Podemos dividir los servicios en tres tipos diferentes según su relación con e
 > Domain services
 Son responsables del comportamiento más específico del dominio, es decir, realizan acciones que no dependen de la aplicación concreta que estemos desarrollando, sino que pertenecen a la parte más interna del dominio y que podrían tener sentido en otras aplicaciones pertenecientes al mismo dominio.Por ejemplo, crear un nuevo curso.
 > Application services
-Son responsables del flujo principal de la aplicación, es decir, son los casos de uso de nuestra aplicación. Son la parte visible al exterior del dominio de nuestro sistema, por lo que son el punto de entrada-salida para interactuar con la funcionalidad interna del dominio. Su función es coordinar entidades, value objects, domain services e infrastructure services para llevar a cabo una acción.Por ejemplo, añadir un nuevo alumno al registro para tomarle la asitencia.
+Son responsables del flujo principal de la aplicación, es decir, son los casos de uso de nuestra aplicación. Son la parte visible al exterior del dominio de nuestro sistema, por lo que son el punto de entrada-salida para interactuar con la funcionalidad interna del dominio. Su función es coordinar entidades, value objects, domain services e infrastructure services para llevar a cabo una acción.
+Por ejemplo, añadir un nuevo alumno al registro para tomarle la asitencia.
+
 > Infrastructure services
 Declaran comportamiento que no pertenece realmente al dominio de la aplicación pero que debemos ser capaces de realizar como parte de este. Por ejemplo, enviar el registro de asistencia de cada alumno a su correo. 
+
+Estamos manejando estos con solo un servicio, este nos permite realizar cualquier tipo de consulta.
+```php
+$factory = new factoryDAO();
+$do = $_GET['do'];
+$entity = $_GET['entity'];
+
+$entityDAO = $factory -> createDAO($entity,$do);
+$entityDAO -> ejecutarQuery();
+```
+
